@@ -31,7 +31,8 @@ def connect(url):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--country', type=str, help="Per Country stats")
+    parser.add_argument('-c', '--country', action='store', help="Per Country stats")
+    parser.add_argument('-y', '--yesterday', action='store_true', default=False, help="Yesterdays Country stats")
     parser.add_argument('-a', '--all', action='store_true', help="Get global stats: cases, deaths, recovered, time last updated, and active cases.")
     args = parser.parse_args()
 
@@ -39,8 +40,13 @@ def main():
         url = 'https://corona.lmao.ninja/v2/all'
         allcountries(url)
     elif args.country:
-        url = 'https://corona.lmao.ninja/v2/countries/' + args.country
-        percountry(url)
+        whatdays_data = 'Todays'
+        if args.yesterday:
+            url = 'https://corona.lmao.ninja/v2/countries/' + args.country + '?yesterday=true'
+            whatdays_data = 'Yesterdays'
+        else:
+           url = 'https://corona.lmao.ninja/v2/countries/' + args.country
+        percountry(url, whatdays_data)
     else:
         parser.print_help()
 
@@ -73,7 +79,7 @@ def allcountries(url):
 
     console.print(table)
 
-def percountry(url):
+def percountry(url, whatdays_data):
     data = connect(url)
     updated = convertdate(data['updated'])
 
@@ -96,10 +102,10 @@ def percountry(url):
     )
     console.print(table)
 
-    console.print('Todays Cases:')
+    console.print(f'{whatdays_data} Cases:')
     table = Table(show_header=True)
-    table.add_column("Today's Cases", header_style="magenta")
-    table.add_column("Today's Deaths", header_style="red")
+    table.add_column(f"{whatdays_data} Cases", header_style="magenta")
+    table.add_column(f"{whatdays_data} Deaths", header_style="red")
     table.add_column("Deaths Per Million", header_style="green")
     table.add_column("Total Tests", header_style="blue")
     table.add_column("Tests Per OneMillion", header_style="cyan")

@@ -54,7 +54,7 @@ def convertdate(date):
 
 def change_case(str): 
     return ''.join(['_'+i.lower() if i.isupper()  
-               else i for i in str]).lstrip('_') 
+               else i for i in str]).lstrip('_').title()
 
 def allcountries(url):
     data = connect(url)
@@ -67,11 +67,11 @@ def allcountries(url):
     for key, value in data.items():
         if key == 'updated':
             value = convertdate(data['updated'])
-            table.add_row(key, value)
+            table.add_row(key.title(), value)
             continue
 
         table.add_row(
-            change_case(key).title(),
+            change_case(key),
             str("{:,}".format(value))
         )
 

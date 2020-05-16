@@ -21,11 +21,11 @@ console = Console()
 
 def connect(url):
     try:
-        r = requests.get(url)
-        if r.status_code == 200:
-            return r.json()
-        else:
-            print(f"No country with iso code: {args.country}")
+        with requests.get(url, timeout=3) as r:
+          if r.status_code == 200:
+              return r.json()
+          else:
+              print(f"No country with iso code: {args.country}")
     except requests.exceptions.RequestException as e: 
         raise SystemExit(e)
 

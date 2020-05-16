@@ -17,18 +17,6 @@ import decimal
 from rich.console import Console
 from rich.table import Column, Table
 
-console = Console()
-
-def connect(url):
-    try:
-        with requests.get(url, timeout=3) as r:
-          if r.status_code == 200:
-              return r.json()
-          else:
-              print(f"No country with iso code: {args.country}")
-    except requests.exceptions.RequestException as e: 
-        raise SystemExit(e)
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--country', action='store', help="Per Country stats")
@@ -49,6 +37,16 @@ def main():
         percountry(url, whatdays_data)
     else:
         parser.print_help()
+
+def connect(url):
+    try:
+        with requests.get(url, timeout=3) as r:
+          if r.status_code == 200:
+              return r.json()
+          else:
+              print(f"No country with iso code: {args.country}")
+    except requests.exceptions.RequestException as e: 
+        raise SystemExit(e)
 
 def convertdate(date):
     # divide timestamp by 1000 to convert from milliseconds to seconds
@@ -119,4 +117,6 @@ def percountry(url, whatdays_data):
     console.print(table)
 
 if __name__ == '__main__':
+
+    console = Console()
     main()

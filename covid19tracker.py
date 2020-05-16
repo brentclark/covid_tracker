@@ -8,20 +8,26 @@ Purpose: This is something I wrote to keep track of the global pandemic.
 
 API used: https://corona.lmao.ninja/docs/#/Countries%20/%20Continents
 """
-import requests
-import json
 import argparse
 import datetime
-import decimal
+import requests
 
 from rich.console import Console
 from rich.table import Column, Table
+#from rich.table import Table
 
 def main():
+    """ main function to satisfy pylint """
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--country', action='store', help="Per Country stats")
-    parser.add_argument('-y', '--yesterday', action='store_true', default=False, help="Yesterdays Country stats")
-    parser.add_argument('-a', '--all', action='store_true', help="Get global stats: cases, deaths, recovered, time last updated, and active cases.")
+
+    parser.add_argument('-y', '--yesterday', action='store_true',
+                        default=False,
+                        help="Yesterdays Country stats")
+
+    parser.add_argument('-a', '--all', action='store_true',
+                        help="Get global stats: cases, deaths, recovered, time last updated, and active cases.")
     args = parser.parse_args()
 
     if args.all:
@@ -33,33 +39,34 @@ def main():
             url = 'https://corona.lmao.ninja/v2/countries/' + args.country + '?yesterday=true'
             whatdays_data = 'Yesterdays'
         else:
-           url = 'https://corona.lmao.ninja/v2/countries/' + args.country
+            url = 'https://corona.lmao.ninja/v2/countries/' + args.country
         percountry(url, whatdays_data)
     else:
         parser.print_help()
 
 def connect(url):
+    """ http request to corona API """
     try:
         with requests.get(url, timeout=3) as r:
-          if r.status_code == 200:
-              return r.json()
-          else:
-              print(f"No country with iso code: {args.country}")
-    except requests.exceptions.RequestException as e: 
+            if r.status_code == 200:
+                return r.json()
+    except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
 def convertdate(date):
-    # divide timestamp by 1000 to convert from milliseconds to seconds
+    """ divide timestamp by 1000 to convert from milliseconds to seconds """
+
     return datetime.datetime.utcfromtimestamp(date/1000).strftime('%Y-%m-%d %H:%M:%S')
 
-def change_case(str): 
-    return ''.join(['_'+i.lower() if i.isupper()  
-               else i for i in str]).lstrip('_').title()
+def change_case(globalkey):
+    """ convert camelString """
+
+    return ''.join(['_'+i.lower() if i.isupper() else i for i in globalkey]).lstrip('_').title()
 
 def allcountries(url):
-    data = connect(url)
-    updated = convertdate(data['updated'])
+    """ query global status """
 
+    data = connect(url)
     table = Table(show_header=True)
     table.add_column("Global Stats", header_style="white")
     table.add_column("")
@@ -75,14 +82,16 @@ def allcountries(url):
             str("{:,}".format(value))
         )
 
-    console.print(table)
+    CONSOLE.print(table)
 
 def percountry(url, whatdays_data):
+    """ per country status """
+
     data = connect(url)
     updated = convertdate(data['updated'])
 
     status = f"Country: {data['country']} ([dim white]Last updated: {updated}[/dim white] (UTC))"
-    console.print(status, style="red")
+    CONSOLE.print(status, style="red")
 
     table = Table(show_header=True)
     table.add_column("Cases", header_style="magenta")
@@ -98,9 +107,9 @@ def percountry(url, whatdays_data):
         str("{:,}".format(data['active'])),
         str("{:,}".format(data['critical']))
     )
-    console.print(table)
+    CONSOLE.print(table)
 
-    console.print(f'{whatdays_data} Cases:')
+    CONSOLE.print(f'{whatdays_data} Cases:')
     table = Table(show_header=True)
     table.add_column(f"{whatdays_data} Cases", header_style="magenta")
     table.add_column(f"{whatdays_data} Deaths", header_style="red")
@@ -114,9 +123,9 @@ def percountry(url, whatdays_data):
         str("{:,}".format(data['tests'])),
         str("{:,}".format(data['testsPerOneMillion']))
     )
-    console.print(table)
+    CONSOLE.print(table)
 
 if __name__ == '__main__':
 
-    console = Console()
+    CONSOLE = Console()
     main()

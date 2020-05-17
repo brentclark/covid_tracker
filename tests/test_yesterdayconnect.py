@@ -3,12 +3,14 @@ import pytest
 from pytest_mock import mocker
 from covid19tracker import connect
 
-url = 'https://corona.lmao.ninja/v2/countries/' + 'za'
-@pytest.mark.connect
-def test_connect():
-  """ should return a dictionary with the following keys """
-  data = connect(url)
-  print(f"Testing {url}")
+yesterday_url = 'https://corona.lmao.ninja/v2/countries/' + 'za' + '?yesterday=true'
+@pytest.mark.yesterdayconnect
+def test_yesterdayconnect():
+  """ should return a dictionary with the following keys, based 
+      on yesterdays flagged as true
+  """
+  data = connect(yesterday_url)
+  print(f"Testing {yesterday_url}")
 
   assert 'active' in data
   assert 'cases' in data
@@ -21,8 +23,3 @@ def test_connect():
   assert 'testsPerOneMillion' in data
   assert 'todayCases' in data
   assert 'todayDeaths' in data
-
-@pytest.mark.connect_should_throw_exception
-def test_that_connect_should_throw_exception():
-  with pytest.raises(Exception):
-    connect()

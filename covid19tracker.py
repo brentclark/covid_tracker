@@ -13,36 +13,41 @@ import datetime
 import requests
 
 from rich.console import Console
-from rich.table import Column, Table
-#from rich.table import Table
+from rich.table import Table
 
 def main():
     """ main function to satisfy pylint """
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--country', action='store', help="Per Country stats")
-
+    parser.add_argument('-cs', '--countrys', action='store_true',
+                        help="Get All Countries Totals for Actual and Yesterday Data",
+                        default=False)
     parser.add_argument('-y', '--yesterday', action='store_true',
                         default=False,
                         help="Yesterdays Country stats")
-
     parser.add_argument('-a', '--all', action='store_true',
-                        help="Get global stats: cases, deaths, recovered, time last updated, and active cases.")
+                        help="Global stats: cases, deaths, recovered etc.")
+
     args = parser.parse_args()
 
     if args.all:
         url = 'https://corona.lmao.ninja/v2/all'
         allcountries(url)
-    elif args.country:
+
+    if args.country:
         whatdays_data = 'Todays'
         if args.yesterday:
             url = 'https://corona.lmao.ninja/v2/countries/' + args.country + '?yesterday=true'
             whatdays_data = 'Yesterdays'
         else:
             url = 'https://corona.lmao.ninja/v2/countries/' + args.country
+
         percountry(url, whatdays_data)
-    else:
-        parser.print_help()
+
+    if args.countrys:
+        url = 'https://corona.lmao.ninja/v2/countries/'
+        countries(url)
 
 def connect(url):
     """ http request to corona API """
@@ -50,6 +55,7 @@ def connect(url):
         with requests.get(url, timeout=3) as requestapi:
             if requestapi.status_code == 200:
                 return requestapi.json()
+        return False
     except requests.exceptions.RequestException as requestapiexception:
         raise SystemExit(requestapiexception)
 
@@ -123,6 +129,32 @@ def percountry(url, whatdays_data):
         str("{:,}".format(data['tests'])),
         str("{:,}".format(data['testsPerOneMillion']))
     )
+    CONSOLE.print(table)
+
+def countries(url):
+    """ country rankings """
+
+    data = connect(url)
+    table = Table(show_header=True)
+    table.add_column("Country", header_style="yellow")
+    table.add_column("Cases", header_style="magenta")
+    table.add_column("Deaths", header_style="red")
+    table.add_column("Recovered", header_style="green")
+    table.add_column("Active", header_style="blue")
+    table.add_column("Critical", header_style="cyan")
+    table.add_column("Population", header_style="green")
+
+    for i in data:
+        table.add_row(
+            f"{i['country']}",
+            str("{:,}".format(i['cases'])),
+            str("{:,}".format(i['deaths'])),
+            str("{:,}".format(i['recovered'])),
+            str("{:,}".format(i['active'])),
+            str("{:,}".format(i['critical'])),
+            str("{:,}".format(i['population']))
+        )
+
     CONSOLE.print(table)
 
 if __name__ == '__main__':

@@ -47,11 +47,11 @@ def main():
 def connect(url):
     """ http request to corona API """
     try:
-        with requests.get(url, timeout=3) as r:
-            if r.status_code == 200:
-                return r.json()
-    except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+        with requests.get(url, timeout=3) as requestapi:
+            if requestapi.status_code == 200:
+                return requestapi.json()
+    except requests.exceptions.RequestException as requestapiexception:
+        raise SystemExit(requestapiexception)
 
 def convertdate(date):
     """ divide timestamp by 1000 to convert from milliseconds to seconds """

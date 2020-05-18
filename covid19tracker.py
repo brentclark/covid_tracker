@@ -49,29 +49,28 @@ def main():
                         help="Yesterdays Country stats")
     parser.add_argument('-a', '--all', action='store_true',
                         help="Global stats: cases, deaths, recovered etc.")
-
     args = parser.parse_args()
 
     if args.all:
         url = 'https://corona.lmao.ninja/v2/all'
         allcountries(url)
-
-    if args.country:
+    elif args.country:
         whatdays_data = 'Todays'
         if args.yesterday:
             url = 'https://corona.lmao.ninja/v2/countries/' + args.country + '?yesterday=true'
             whatdays_data = 'Yesterdays'
         else:
             url = 'https://corona.lmao.ninja/v2/countries/' + args.country
-
         percountry(url, whatdays_data)
-
-    if args.countrys:
+    elif args.countrys:
         url = 'https://corona.lmao.ninja/v2/countries/'
         countries(url)
+    else:
+        parser.print_help()
 
 def connect(url):
     """ http request to corona API """
+
     try:
         with requests.get(url, timeout=3) as requestapi:
             if requestapi.status_code == 200:

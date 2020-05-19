@@ -1,12 +1,11 @@
-# covid_tracker
-
-# Overview
+# covid tracker
 
 covid19tracker.py is a simple tool help get the stats for COVID19.
 Data shown, ranges from global data overviews to country specific mobility data.
 
 
 ```bash
+git clone https://github.com/brentclark/covid_tracker
 pip3 install -r requirements.txt
 ```
 

@@ -51,19 +51,23 @@ def main():
                         help="Global stats: cases, deaths, recovered etc.")
     args = parser.parse_args()
 
+    url = "https://corona.lmao.ninja/v2/"
+
     if args.all:
-        url = 'https://corona.lmao.ninja/v2/all'
+        url = url + 'all'
         allcountries(url)
     elif args.country:
+
+        url = url + 'countries/' + args.country
         whatdays_data = 'Todays'
+
         if args.yesterday:
-            url = 'https://corona.lmao.ninja/v2/countries/' + args.country + '?yesterday=true'
+            url = url + '?yesterday=true'
             whatdays_data = 'Yesterdays'
-        else:
-            url = 'https://corona.lmao.ninja/v2/countries/' + args.country
+
         percountry(url, whatdays_data)
     elif args.countrys:
-        url = 'https://corona.lmao.ninja/v2/countries/'
+        url = url + 'countries/'
         countries(url)
     else:
         parser.print_help()

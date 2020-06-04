@@ -32,6 +32,7 @@ API used: https://corona.lmao.ninja/docs/#/Countries%20/%20Continents
 import argparse
 import datetime
 import requests
+from collections import OrderedDict
 
 from rich.console import Console
 from rich.table import Table
@@ -44,6 +45,7 @@ def main():
     parser.add_argument('-cs', '--countrys', action='store_true',
                         help="Get All Countries Totals for Actual and Yesterday Data",
                         default=False)
+    parser.add_argument('-sb', '--sortby', choices=['deaths','cases', 'recovered', 'active', 'critical', 'population' ], default='deaths', help='sort by for country sort')
     parser.add_argument('-y', '--yesterday', action='store_true',
                         default=False,
                         help="Yesterdays Country stats")
@@ -68,7 +70,7 @@ def main():
         percountry(url, whatdays_data)
     elif args.countrys:
         url = url + 'countries/'
-        countries(url)
+        countries(url, args.sortby)
     else:
         parser.print_help()
 
@@ -155,31 +157,41 @@ def percountry(url, whatdays_data):
     )
     CONSOLE.print(table)
 
-def countries(url):
+def countries(url, sortby):
     """ country rankings """
+    d = connect(url)
 
-    data = connect(url)
+    a = {i['country']:i[sortby] for i in d}
+    data = OrderedDict(sorted(a.items(), key=lambda t: t[1]))
+
+    result = {}
+    for k, v in data.items():
+        for x in d:
+            if x['country'] == k:
+                result[k] = x
+
     table = Table(show_header=True)
     table.add_column("Country", header_style="yellow")
-    table.add_column("Cases", header_style="magenta")
     table.add_column("Deaths", header_style="red")
+    table.add_column("Cases", header_style="magenta")
     table.add_column("Recovered", header_style="green")
     table.add_column("Active", header_style="blue")
     table.add_column("Critical", header_style="cyan")
     table.add_column("Population", header_style="green")
 
-    for i in data:
+    for country in data.keys():
         table.add_row(
-            f"{i['country']}",
-            str("{:,}".format(i['cases'])),
-            str("{:,}".format(i['deaths'])),
-            str("{:,}".format(i['recovered'])),
-            str("{:,}".format(i['active'])),
-            str("{:,}".format(i['critical'])),
-            str("{:,}".format(i['population']))
+            f"{country}",
+            str("[red]{:,}[/red]".format(result[country]['deaths'])) if sortby == 'deaths' else str("{:,}".format(result[country]['deaths'])) ,
+            str("[magenta]{:,}[/magenta]".format(result[country]['cases'])) if sortby == 'cases' else str("{:,}".format(result[country]['cases'])),
+            str("[green]{:,}[/green]".format(result[country]['recovered'])) if sortby == 'recovered' else str("{:,}".format(result[country]['recovered'])),
+            str("[blue]{:,}[/blue]".format(result[country]['active'])) if sortby == 'active' else str("{:,}".format(result[country]['active'])),
+            str("[cyan]{:,}[/cyan]".format(result[country]['critical']))if sortby == 'critical' else str("{:,}".format(result[country]['critical'])),
+            str("[green]{:,}[/green]".format(result[country]['population'])) if sortby == 'population' else str("{:,}".format(result[country]['population']))
         )
 
     CONSOLE.print(table)
+    print(f"Highlighted column which is sorted by. i.e. {sortby}")
 
 if __name__ == '__main__':
 

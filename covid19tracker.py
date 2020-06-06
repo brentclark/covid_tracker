@@ -45,7 +45,8 @@ def main():
     parser.add_argument('-cs', '--countrys', action='store_true',
                         help="Get All Countries Totals for Actual and Yesterday Data",
                         default=False)
-    parser.add_argument('-sb', '--sortby', choices=['deaths','cases', 'recovered', 'active', 'critical', 'population' ], default='deaths', help='sort by for country sort')
+    parser.add_argument('-sb', '--sortby', choices=['deaths','cases', 'recovered', 'active', 'critical', 'population'], default='deaths', help='sort by for country sort')
+    parser.add_argument('-ob', '--orderby', choices=['asc', 'desc'], default='desc', help='sorts the result set in with ascending or descending order')
     parser.add_argument('-y', '--yesterday', action='store_true',
                         default=False,
                         help="Yesterdays Country stats")
@@ -70,7 +71,7 @@ def main():
         percountry(url, whatdays_data)
     elif args.countrys:
         url = url + 'countries/'
-        countries(url, args.sortby)
+        countries(url, args.sortby, args.orderby)
     else:
         parser.print_help()
 
@@ -157,12 +158,13 @@ def percountry(url, whatdays_data):
     )
     CONSOLE.print(table)
 
-def countries(url, sortby):
+def countries(url, sortby, orderby):
     """ country rankings """
     d = connect(url)
+    r = True if orderby == 'desc' else False
 
     a = {i['country']:i[sortby] for i in d}
-    data = OrderedDict(sorted(a.items(), key=lambda t: t[1]))
+    data = OrderedDict(sorted(a.items(), key=lambda t: t[1], reverse=r))
 
     result = {}
     for k, v in data.items():

@@ -160,7 +160,7 @@ def countries(url, sortby, orderby):
     table.add_column('Critical', header_style='cyan')
     table.add_column('Population', header_style='green')
     table.add_column('todayDeaths', header_style='red')
-    table.add_column('todayCases', header_style='red')
+    table.add_column('todayCases', header_style='magenta')
 
     for country in data.keys():
         table.add_row(
@@ -172,7 +172,7 @@ def countries(url, sortby, orderby):
             str("[cyan]{:,}[/cyan]".format(result[country]['critical']))if sortby == 'critical' else str("{:,}".format(result[country]['critical'])),
             str("[green]{:,}[/green]".format(result[country]['population'])) if sortby == 'population' else str("{:,}".format(result[country]['population'])),
             str("[red]{:,}[/red]".format(result[country]['todayDeaths'])) if sortby == 'todayDeaths' else str("{:,}".format(result[country]['todayDeaths']))
-            str("[red]{:,}[/red]".format(result[country]['todayCases'])) if sortby == 'todayCases' else str("{:,}".format(result[country]['todayCases']))
+            str("[magenta]{:,}[/magenta]".format(result[country]['todayCases'])) if sortby == 'todayCases' else str("{:,}".format(result[country]['todayCases']))
         )
 
     CONSOLE.print(table)

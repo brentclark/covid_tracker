@@ -45,7 +45,7 @@ def main():
     parser.add_argument('-cs', '--countrys', action='store_true',
                         help="Get All Countries Totals for Actual and Yesterday Data",
                         default=False)
-    parser.add_argument('-sb', '--sortby', choices=['deaths','cases', 'recovered', 'active', 'critical', 'population'], default='deaths', help='sort by for country sort')
+    parser.add_argument('-sb', '--sortby', choices=['deaths','cases', 'recovered', 'active', 'critical', 'population', 'todayDeaths', 'todayCases'], default='deaths', help='sort by for country sort')
     parser.add_argument('-ob', '--orderby', choices=['asc', 'desc'], default='desc', help='sorts the result set in with ascending or descending order')
     parser.add_argument('-y', '--yesterday', action='store_true',
                         default=False,
@@ -173,13 +173,15 @@ def countries(url, sortby, orderby):
                 result[k] = x
 
     table = Table(show_header=True)
-    table.add_column("Country", header_style="yellow")
-    table.add_column("Deaths", header_style="red")
-    table.add_column("Cases", header_style="magenta")
-    table.add_column("Recovered", header_style="green")
-    table.add_column("Active", header_style="blue")
-    table.add_column("Critical", header_style="cyan")
-    table.add_column("Population", header_style="green")
+    table.add_column('Country', header_style='yellow')
+    table.add_column('Deaths', header_style='red')
+    table.add_column('Cases', header_style='magenta')
+    table.add_column('Recovered', header_style='green')
+    table.add_column('Active', header_style='blue')
+    table.add_column('Critical', header_style='cyan')
+    table.add_column('Population', header_style='green')
+    table.add_column('todayDeaths', header_style='red')
+    table.add_column('todayCases', header_style='red')
 
     for country in data.keys():
         table.add_row(
@@ -189,7 +191,9 @@ def countries(url, sortby, orderby):
             str("[green]{:,}[/green]".format(result[country]['recovered'])) if sortby == 'recovered' else str("{:,}".format(result[country]['recovered'])),
             str("[blue]{:,}[/blue]".format(result[country]['active'])) if sortby == 'active' else str("{:,}".format(result[country]['active'])),
             str("[cyan]{:,}[/cyan]".format(result[country]['critical']))if sortby == 'critical' else str("{:,}".format(result[country]['critical'])),
-            str("[green]{:,}[/green]".format(result[country]['population'])) if sortby == 'population' else str("{:,}".format(result[country]['population']))
+            str("[green]{:,}[/green]".format(result[country]['population'])) if sortby == 'population' else str("{:,}".format(result[country]['population'])),
+            str("[red]{:,}[/red]".format(result[country]['todayDeaths'])) if sortby == 'todayDeaths' else str("{:,}".format(result[country]['todayDeaths']))
+            str("[red]{:,}[/red]".format(result[country]['todayCases'])) if sortby == 'todayCases' else str("{:,}".format(result[country]['todayCases']))
         )
 
     CONSOLE.print(table)

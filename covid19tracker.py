@@ -159,8 +159,8 @@ def countries(url, sortby, orderby):
     table.add_column('Active', header_style='blue')
     table.add_column('Critical', header_style='cyan')
     table.add_column('Population', header_style='green')
-    table.add_column('todayDeaths', header_style='red')
-    table.add_column('todayCases', header_style='magenta')
+    table.add_column('Today Deaths', header_style='red')
+    table.add_column('Today Cases', header_style='magenta')
 
     for country in data.keys():
         table.add_row(
@@ -171,8 +171,8 @@ def countries(url, sortby, orderby):
             str("[blue]{:,}[/blue]".format(result[country]['active'])) if sortby == 'active' else str("{:,}".format(result[country]['active'])),
             str("[cyan]{:,}[/cyan]".format(result[country]['critical']))if sortby == 'critical' else str("{:,}".format(result[country]['critical'])),
             str("[green]{:,}[/green]".format(result[country]['population'])) if sortby == 'population' else str("{:,}".format(result[country]['population'])),
-            str("[red]{:,}[/red]".format(result[country]['todayDeaths'])) if sortby == 'todayDeaths' else str("{:,}".format(result[country]['todayDeaths']))
-            str("[magenta]{:,}[/magenta]".format(result[country]['todayCases'])) if sortby == 'todayCases' else str("{:,}".format(result[country]['todayCases']))
+            str("[red]{:,}[/red]".format(result[country]['todayDeaths'])) if sortby == 'todayDeaths' else str("{:,}".format(result[country]['todayDeaths'])),
+            str("[magenta]{:,}[/magenta]".format(result[country]['todayCases'])) if sortby == 'todayCases' else str("{:,}".format(result[country]['todayCases'])),
         )
 
     CONSOLE.print(table)

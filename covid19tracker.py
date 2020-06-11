@@ -39,7 +39,6 @@ def main():
         url = url + 'all'
         allcountries(url)
     elif args.country:
-
         url = url + 'countries/' + args.country
         whatdays_data = 'Todays'
 
@@ -50,6 +49,10 @@ def main():
         percountry(url, whatdays_data)
     elif args.countrys:
         url = url + 'countries/'
+
+        if args.yesterday:
+            url = url + '?yesterday=true'
+
         countries(url, args.sortby, args.orderby)
     else:
         parser.print_help()

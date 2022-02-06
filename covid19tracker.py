@@ -10,8 +10,8 @@ API used: https://corona.lmao.ninja/docs/#/Countries%20/%20Continents
 """
 import argparse
 import datetime
-import requests
 from collections import OrderedDict
+import requests
 
 from rich.console import Console
 from rich.table import Table

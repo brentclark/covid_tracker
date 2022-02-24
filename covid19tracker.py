@@ -190,7 +190,7 @@ def countries(url, sortby, orderby):
     data = OrderedDict(sorted(a.items(), key=lambda t: t[1], reverse=r))
 
     result = {}
-    for k, v in data.items():
+    for k in data.items():
         for x in d:
             if x["country"] == k:
                 result[k] = x
